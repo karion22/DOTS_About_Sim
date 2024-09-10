@@ -1,0 +1,116 @@
+
+// ECS 기본 정리 (Version 1.2.4)
+	기본적으로 UnityEngine의 기능을 사용할 수 없다.
+	SystemAPI 기능을 활용하여 작업한다.
+
+- Chunk (Default : 16Kb)
+	Entity 패키지에서 청크 사이즈를 변경할 수 있지만, 메모리 사용량 증가 대비 효율은 좋다고 보기 어렵다. 
+	[https://discussions.unity.com/t/why-cant-i-change-the-limit-size-of-chunk/925199]
+
+- Archetype 
+	같은 구조 그룹 Component의 묶음. (묶여있는 여러 컴포넌트들을 청크 사이즈로 쪼개놓은 연결 집합체이기도 함)
+
+- Entity
+	프로그램 식별 ID
+
+- Component
+	데이터 구성 요소. 로직 미포함
+
+- System
+	Component Data를 활용하여 로직 구현.
+
+- SystemBase - ISystem
+	SystemBase : Managed Object(힙), 메인 쓰레드 전용. Burst Compiler 사용 불가. Class/Sturct 겸용
+	ISystem : Unmanaged Object, 멀티 쓰레드 사용 가능. Burst Compiler 사용 가능. Struct 전용
+
+	a. SystemBase.Entities.ForEach 
+		: Query 검색으로 나온 엔티티들을 처리하는 방식
+		ex) 
+		public partial class TestSystem : SystemBase
+		{
+			//..
+			protected override void OnUpdate()
+			{
+				Entities.ForEach((ref Translation tr) => {
+					// Something...
+				});.ScheduleParaller();
+			}
+		}
+	b. IJobEntity 
+		: SystemBase.Entities.ForEach와 유사하지만, ISystem에서도 사용가능하다.
+		ex)
+		public partial struct TestSytem : ISystem
+		{
+			//..
+			public void OnUpdate(ref SystemState inState)
+			{
+				var ecbSingleton = SystemAPI.GetSingleton<>();
+				var ecb = ecbSingleton.CreateCommandBuffer(inState.WorldUnmanaged);
+
+				new TestJob {
+				    ECB = ecb.AsParallelWriter()
+				}.ScheduleParallel();
+			}
+		}
+		
+		public partial struct TestJob : IJobEntity
+		{
+			public EntityCommandBuffer.ParallelWriter ECB;
+		    public void Execute([EntityIndexInQuery] int inIndex)
+			{			
+		        ECB.Instantiate(inIndex, Spawner.Prefab);
+			}
+		}
+
+	c. Manual Iteration
+		: 자동화된 매커니즘 대신, 직접 엔티티 쿼리를 작성하고, 수동으로 반복시키는 방식.
+		  성능 최적화가 필요하거나, 특정 순서 또는 조건 반복이 필요할 때 사용
+		ex)  
+		public partial class TestSystem : SystemBase
+		{
+		    protected override void OnUpdate()
+		    {
+		        EntityQuery query = GetEntityQuery(typeof(LocalTransform));
+
+		        NativeArray<Entity> entities = query.ToEntityArray(Allocator.TempJob);
+		        NativeArray<LocalTransform> localTr = query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+
+		        for(int i = 0; i < entities.Length; i++)
+		        {
+		            // something
+		        }
+
+		        entities.Dispose();
+		        localTr.Dispose();
+		    }
+		}
+
+- Aspect
+	여러 가지 컴포넌트를 묶어서 처리할 수 있도록 해주는 개념.
+	ex) 
+	public readonly partial struct TransformAspect : IAspect
+	{
+		private readonly RefRW<LocalTransform> m_LocalTr;
+	}
+
+- EntityQuery
+	: 특정한 Entity 목록을 처리.
+	GetEntityQuery : SystemBase API
+		GetEntityQuery(typeof(LocalTransform)) : LocalTransform Read/Write [a.k.a ComponentType.ReadWrite<LocalTransform>()]
+		GetEntityQuery(ComponentType.ReadOnly<LocalTransform>()) : LocalTransform Read Only 
+
+- EntityQueryDesc
+	: Flag
+		None : 해당 데이터 타입을 가지지 않은 Entity 조회
+		All : 해당 데이터를 모두 가지고 있는 Entity 조회
+		Any : 해당 데이터 타입 중 1개라도 가지고 있는 Entity 조회
+
+		Options : 특정 동작을 제어하기 위한 값
+			1) Default : 기본
+			2) IncludePrefab : 특정 PrefabTag가 포함된 Archetype
+			3) FilterWriteGroup : WriteGroup(typeof(Funcs)) 형태의 그룹 등등
+
+	두 가지 이상의 EntityQueryDesc를 결합(Add)할 경우 None/All은 AND 결합, Any는 OR 결합을 한다.
+	
+- Entity Command Buffer
+	: 멀티 쓰레드 환경에서 쓰기 경쟁 문제가 발생할 수 있음. 안전 장치를 해놓은 것이 Entity Command Buffer
