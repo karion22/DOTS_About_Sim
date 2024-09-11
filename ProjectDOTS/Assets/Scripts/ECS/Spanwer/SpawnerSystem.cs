@@ -44,15 +44,6 @@ public partial class SpawnerSystem : SystemBase
                 }
 
                 entities.Dispose();
-
-                /*
-                int count = math.min(entities.Length, math.abs(diff));
-                for (int i = entities.Length - 1, end = entities.Length - count; i >= end; i--)
-                    EntityManager.DestroyEntity(entities[i]);
-
-                entities.Dispose();
-                spawner.ValueRW.CurrCount -= count;
-                */
             }
         }
     }

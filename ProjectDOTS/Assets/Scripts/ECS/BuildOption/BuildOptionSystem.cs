@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 
 /*
-public partial struct StateChangeSystem : ISystem
+public partial struct BuildOptionSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState inState)
