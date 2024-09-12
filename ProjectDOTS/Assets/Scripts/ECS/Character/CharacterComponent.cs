@@ -1,6 +1,12 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
-public partial struct CharacterComponent : IComponentData
+public struct CharacterComponent : IComponentData
 {
+    public float MoveSpeed;
+}
 
+public struct CharacterInput : IComponentData
+{
+    public float2 MoveDirection;
 }

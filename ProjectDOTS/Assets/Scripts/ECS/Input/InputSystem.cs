@@ -12,16 +12,20 @@ public partial class InputSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        var hit = SystemAPI.GetSingletonRW<InputComponent>();
-        hit.ValueRW.IsHitChanged = false;
-
-        if (Camera.main == null || !Input.GetMouseButton(0)) return;
-
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(new Plane(Vector3.up, 0f).Raycast(ray, out var dist))
+        if(SystemAPI.TryGetSingletonRW<InputComponent>(out var hit))
         {
-            hit.ValueRW.IsHitChanged = true;
-            hit.ValueRW.HitPoint = ray.GetPoint(dist);
+
+            // Click Event
+            hit.ValueRW.IsHitChanged = false;
+
+            if (Camera.main == null || !Input.GetMouseButton(0)) return;
+
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (new Plane(Vector3.up, 0f).Raycast(ray, out var dist))
+            {
+                hit.ValueRW.IsHitChanged = true;
+                hit.ValueRW.HitPoint = ray.GetPoint(dist);
+            }
         }
     }
 }
