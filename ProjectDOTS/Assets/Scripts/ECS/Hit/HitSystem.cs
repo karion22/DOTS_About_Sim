@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[UpdateAfter(typeof(CharacterAttackSystem))]
 [BurstCompile]
 public partial struct HitSystem : ISystem
 {

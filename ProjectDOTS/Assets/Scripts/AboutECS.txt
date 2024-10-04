@@ -114,3 +114,7 @@
 	
 - Entity Command Buffer
 	: 멀티 쓰레드 환경에서 쓰기 경쟁 문제가 발생할 수 있음. 안전 장치를 해놓은 것이 Entity Command Buffer
+
+- ScheduleParallel(state.Dependency)와 state.Dependency = (job) 차이
+	: ScheduleParaller(state.Dependency)는 현재 시스템의 의존성(이전 작업 또는 다른 시스템에 의존 중인) 작업을 기다렸다가 실행하는 부분
+	: state.Dependency 는 해당 잡이 완료될 때까지 의존성을 만드는 것.

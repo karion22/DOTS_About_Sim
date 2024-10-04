@@ -3,13 +3,14 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[UpdateAfter(typeof(CharacterMovementSystem))]
 [BurstCompile]
-public partial struct MovementSystem : ISystem
+public partial struct EnemyMovementSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState inState)
     {
-        inState.RequireForUpdate<MovementComponent>();
+        inState.RequireForUpdate<EnemyMovementComponent>();
     }
 
     [BurstCompile]
@@ -28,7 +29,7 @@ public partial struct MovementSystem : ISystem
     {
         public float dt;
 
-        public void Execute(ref LocalTransform refLocalTr, in MovementComponent inMovement)
+        public void Execute(ref LocalTransform refLocalTr, in EnemyMovementComponent inMovement)
         {
             float3 velocity = math.normalize(inMovement.TargetPosition - refLocalTr.Position) * inMovement.MoveSpeed;
             velocity.y = 0f;

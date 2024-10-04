@@ -4,7 +4,6 @@ using UnityEngine;
 
 public partial class InputSystem : SystemBase
 {
-    [BurstCompile]
     public void OnCreate(ref SystemState inState)
     {
         inState.RequireForUpdate<InputComponent>();
@@ -14,7 +13,6 @@ public partial class InputSystem : SystemBase
     {
         if(SystemAPI.TryGetSingletonRW<InputComponent>(out var hit))
         {
-
             // Click Event
             hit.ValueRW.IsHitChanged = false;
 

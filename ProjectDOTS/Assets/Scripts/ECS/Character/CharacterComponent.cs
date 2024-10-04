@@ -1,12 +1,10 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct CharacterComponent : IComponentData
-{
-    public float MoveSpeed;
-}
+public struct PlayerTag : IComponentData { }
 
-public struct CharacterInput : IComponentData
+public struct CharacterMovementComponent : IComponentData
 {
     public float2 MoveDirection;
+    public float MoveSpeed;
 }
