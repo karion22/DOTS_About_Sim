@@ -150,7 +150,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb215a421c8201e4688f9c17bcde1b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HealthValue: 10
   MoveSpeed: 5
+  AttackRange: 5
+  AttackValue: 1
 --- !u!136 &342621708
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -287,12 +290,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: 455051668272588135, guid: cc5faf99412f90842aaee3ac9d801860, type: 3}
-  SpawnInterval: 1
+  Interval: 0
   CurrCount: 0
   TargetCount: 4
+  Range: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2026800468}
   - {fileID: 342621711}
+  - {fileID: 2026800468}

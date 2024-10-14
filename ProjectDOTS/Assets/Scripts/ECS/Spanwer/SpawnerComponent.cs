@@ -23,4 +23,7 @@ public struct SpawnerComponent : IComponentData
 
     // 타이머
     public float Timer;
+
+    // 생성 범위(거리)
+    public float SpawnRange;
 }
