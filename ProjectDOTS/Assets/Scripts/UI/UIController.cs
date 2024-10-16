@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Linq;
+using TMPro;
 using Unity.Entities;
 using Unity.Scenes;
 using Unity.VisualScripting;
@@ -13,7 +13,10 @@ public class UIController : MonoBehaviour
     private SpawnerAuthoring m_Spawner = null;
 
     [SerializeField] private Slider m_EnemyMaxSlider = null;
+    [SerializeField] private TMP_InputField m_EnemyMaxText = null;
+
     [SerializeField] private Slider m_SpawnTimeSlider = null;
+    [SerializeField] private TMP_InputField m_SpawnTimeText = null;
 
     private int m_EnemyMaxValue = 10;
     private float m_SpawnTimeValue = 1.0f;    
@@ -23,21 +26,37 @@ public class UIController : MonoBehaviour
         if (m_EnemyMaxSlider != null)
             m_EnemyMaxSlider.onValueChanged.AddListener(OnEnemyMaxValueChanged);
 
+        if (m_EnemyMaxText != null)
+            m_EnemyMaxText.onValueChanged.AddListener(OnEnemyMaxTextChanged);
+
         if (m_SpawnTimeSlider != null)
             m_SpawnTimeSlider.onValueChanged.AddListener(OnSpawnTimerValueChanged);
 
+        if (m_SpawnTimeText != null)
+            m_SpawnTimeText.onValueChanged.AddListener(OnSpawnTimerTextChanged);
+
         StartCoroutine(FindEntityAuthoringInSubScene());
-    }
+    }    
 
     public void OnEnemyMaxValueChanged(float inValue)
     {
-        m_EnemyMaxValue = (int)inValue;
+        m_EnemyMaxText.text = inValue.ToString();
+    }
+
+    private void OnEnemyMaxTextChanged(string inValue)
+    {
+        m_EnemyMaxValue = int.Parse(inValue);
         SendToECS();
     }
 
     public void OnSpawnTimerValueChanged(float inValue)
     {
-        m_SpawnTimeValue = inValue;
+        m_SpawnTimeText.text = inValue.ToString();
+    }
+
+    private void OnSpawnTimerTextChanged(string inValue)
+    {
+        m_SpawnTimeValue = float.Parse(inValue);
         SendToECS();
     }
 
