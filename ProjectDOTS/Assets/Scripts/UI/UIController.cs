@@ -66,10 +66,8 @@ public class UIController : MonoBehaviour
 
         if (m_Spawner != null)
         {
-            Debug.Log("Entity is not null");
             if(entityMgr.HasComponent<SpawnerComponent>(m_Spawner.TargetEntity))
             {
-                Debug.Log("Has");
                 var spawnComponent = entityMgr.GetComponentData<SpawnerComponent>(m_Spawner.TargetEntity);
                 if (spawnComponent.IsUnityNull() == false)
                 {

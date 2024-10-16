@@ -6,8 +6,8 @@ public struct SpawnerComponent : IComponentData
     // 생성할 유닛 프리팹
     public Entity Prefab;
 
-    // 기본 생성 위치
-    public float3 SpawnPosition;
+    // 생성 반경
+    public float SpawnRadius;
 
     // 기본 회전 방향
     public quaternion SpawnRotation;

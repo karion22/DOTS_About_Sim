@@ -5,6 +5,8 @@ public struct PlayerTag : IComponentData { }
 
 public struct CharacterMovementComponent : IComponentData
 {
+    public float3 Position;
+
     public float2 MoveDirection;
     public float MoveSpeed;
 }

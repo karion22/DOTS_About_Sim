@@ -5,14 +5,24 @@ using Unity.Mathematics;
 
 public partial class SpawnerSystem : SystemBase
 {
+    private Random m_Random;
+
     protected override void OnCreate()
     {
         RequireForUpdate<SpawnerComponent>();
+
+        m_Random = new Random((uint)System.Environment.TickCount);
     }
 
     protected override void OnUpdate()
     {
         var spawner = SystemAPI.GetSingletonRW<SpawnerComponent>();
+
+        float3 pos = float3.zero;
+        foreach(var characterPos in SystemAPI.Query<RefRO<CharacterMovementComponent>>())
+        {
+            pos = characterPos.ValueRO.Position;
+        }
 
         spawner.ValueRW.Timer += SystemAPI.Time.DeltaTime;
         if (spawner.ValueRO.Timer > spawner.ValueRO.SpawnInterval)
@@ -22,10 +32,13 @@ public partial class SpawnerSystem : SystemBase
             int diff = spawner.ValueRO.TargetCount - spawner.ValueRO.CurrCount;
             if (diff > 0)
             {
+                float2 randPos = m_Random.NextFloat2(-spawner.ValueRO.SpawnRadius, spawner.ValueRO.SpawnRadius);
+                float randAngle = m_Random.NextFloat(-180, 180);
+
                 var entity = EntityManager.Instantiate(spawner.ValueRO.Prefab);
                 EntityManager.SetComponentData(entity, new LocalTransform
                 {
-                    Position = spawner.ValueRO.SpawnPosition,
+                    Position = new float3(pos.x + (randPos.x * math.cos(randAngle)), pos.y, pos.z + (randPos.y * math.sin(randAngle))),
                     Rotation = spawner.ValueRO.SpawnRotation,
                     Scale = 1.0f
                 });

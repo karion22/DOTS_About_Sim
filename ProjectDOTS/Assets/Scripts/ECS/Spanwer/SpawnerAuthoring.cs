@@ -6,6 +6,9 @@ public class SpawnerAuthoring : MonoBehaviour
     // 积己瞪 利 橇府普
     public GameObject Prefab;
 
+    // 积己 馆版
+    public float Radius;
+
     // 积己 林扁
     public float Interval;
 
@@ -26,13 +29,10 @@ public class SpawnerAuthoring : MonoBehaviour
         {
             var entity = GetEntity(TransformUsageFlags.Renderable);
 
-            var spawnPosition = authoring.transform.position;
-            spawnPosition.x -= 1.0f;
-
             AddComponent(entity, new SpawnerComponent
             {
                 Prefab = GetEntity(authoring.Prefab, TransformUsageFlags.Dynamic),
-                SpawnPosition = spawnPosition,
+                SpawnRadius = authoring.Radius,
                 SpawnRotation = authoring.transform.rotation,
                 SpawnInterval = authoring.Interval,
                 SpawnRange = authoring.Range,
