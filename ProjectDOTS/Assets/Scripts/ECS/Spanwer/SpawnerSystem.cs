@@ -24,7 +24,7 @@ public partial class SpawnerSystem : SystemBase
             pos = characterPos.ValueRO.Position;
         }
 
-        spawner.ValueRW.Timer += SystemAPI.Time.DeltaTime;
+        spawner.ValueRW.Timer += SystemAPI.Time.DeltaTime * ECSUtility.GameTimeRatio;
         if (spawner.ValueRO.Timer > spawner.ValueRO.SpawnInterval)
         {
             spawner.ValueRW.Timer = 0f;

@@ -25,7 +25,7 @@ public partial struct EnemyMovementSystem : ISystem
         var job = new MovementJob
         {
             m_TargetLocalTransform = targetLocalTr,
-            m_TimeDelta = SystemAPI.Time.DeltaTime
+            m_TimeDelta = SystemAPI.Time.DeltaTime * ECSUtility.GameTimeRatio
         };
 
         job.ScheduleParallel();
@@ -39,11 +39,12 @@ public partial struct EnemyMovementSystem : ISystem
 
         public void Execute(ref LocalTransform refLocalTr, in EnemyMovementComponent inMovement)
         {
-            float3 velocity = math.normalize(m_TargetLocalTransform.Position - refLocalTr.Position) * inMovement.MoveSpeed;
+            float3 direction = math.normalize(m_TargetLocalTransform.Position - refLocalTr.Position);
+            float3 velocity = direction * inMovement.MoveSpeed;
             velocity.y = 0f;
 
             refLocalTr.Position += velocity * m_TimeDelta;
-            UnityEngine.Debug.Log(m_TargetLocalTransform);
+            refLocalTr.Rotation = quaternion.LookRotation(direction, math.up());
         }
     }
 }

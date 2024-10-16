@@ -17,7 +17,7 @@ public partial struct CharacterMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState inState)
     {
-        float dt = SystemAPI.Time.DeltaTime;
+        float dt = SystemAPI.Time.DeltaTime * ECSUtility.GameTimeRatio;
 
         foreach(var (localTransform, movementInfo) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<CharacterMovementComponent>>())
         {
